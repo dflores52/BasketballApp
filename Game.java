@@ -3,17 +3,16 @@ import java.util.ArrayList;
 
 public class Game {
 
+
     private final TeamStats homeTeamStats;
     private final TeamStats awayTeamStats;
-    private final ArrayList<Object> eventLog;
+    private final ArrayList<String> eventLog; // Specify generic type as String
     private final String gameId;
-    public String gameID;
-    public String homeTeam;
-    public String awayTeam;
-    public String status;
-    public int currentPeriod;
-    public TeamStats teamStatsHome;
-    public TeamStats teamStatsAway;
+    private String homeTeam;
+    private String awayTeam;
+    private String status;
+    private int currentPeriod;
+
 
     public Game(String gameId, String homeTeam, String awayTeam){
         this.gameId = gameId;
@@ -78,7 +77,7 @@ public class Game {
         return awayTeamStats;
     }
 
-    public ArrayList<Object> getEventLog() {
+    public ArrayList<String> getEventLog() {
         return eventLog;
     }
 
