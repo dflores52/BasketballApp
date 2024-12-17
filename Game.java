@@ -1,9 +1,12 @@
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Game {
 
+    private final TeamStats homeTeamStats;
+    private final TeamStats awayTeamStats;
+    private final ArrayList<Object> eventLog;
+    private final String gameId;
     public String gameID;
     public String homeTeam;
     public String awayTeam;
@@ -75,8 +78,11 @@ public class Game {
         return awayTeamStats;
     }
 
-    public List<String> getEventLog() {
+    public ArrayList<Object> getEventLog() {
         return eventLog;
     }
+
+    public void endPeriod() {
+    }
 }
-}
+

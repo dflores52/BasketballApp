@@ -17,6 +17,7 @@ public class TeamStats {
         this.timeoutsUsed = 0;
         this.timeoutLimit = 5; // Default limit, can be adjusted
         this.inBonus = false;
+    }
 
 
         // Methods
@@ -98,4 +99,4 @@ public class TeamStats {
             return inBonus;
         }
     }
-}
+

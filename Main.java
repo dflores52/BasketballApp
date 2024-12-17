@@ -84,7 +84,7 @@ public class Main {
         }
 
         System.out.println("\nGame Log:");
-        for (String event : game.getEventLog()) {
+        for (Object event : game.getEventLog()) {
             System.out.println(event);
         }
     }
