@@ -1,0 +1,29 @@
+<component name="libraryTable">
+  <library name="jfxcore.javafx.controls" type="repository">
+    <properties maven-id="org.jfxcore:javafx-controls:18-ea+1" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/javafx-controls-18-ea+1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-controls-18-ea+1-win.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-graphics-18-ea+1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-graphics-18-ea+1-win.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-base-18-ea+1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-base-18-ea+1-win.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/lib/javafx-controls-18-ea+1-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-controls-18-ea+1-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-graphics-18-ea+1-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-graphics-18-ea+1-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-base-18-ea+1-javadoc.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-base-18-ea+1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/lib/javafx-controls-18-ea+1-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-controls-18-ea+1-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-graphics-18-ea+1-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-graphics-18-ea+1-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-base-18-ea+1-sources.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javafx-base-18-ea+1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
