@@ -6,7 +6,7 @@ import java.sql.SQLException;
 public class SQLiteTest {
 
     public static void main(String[] args) throws SQLException {
-        String url = "jdc:sqlite:test.db";
+        String url = "jdbc:sqlite:test.db";
 
         try(Connection conn = DriverManager.getConnection(url)){
             if(conn != null){

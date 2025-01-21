@@ -1,0 +1,37 @@
+CREATE TABLE IF NOT EXISTS Teams (
+    team_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    team_name TEXT NOT NULL,
+    coach_name TEXT
+);
+
+CREATE TABLE IF NOT EXISTS Players (
+    player_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    team_id INTEGER,
+    player_name TEXT NOT NULL,
+    jersey_number INTEGER,
+    position TEXT,
+    FOREIGN KEY (team_id) REFERENCES Teams (team_id)
+);
+
+CREATE TABLE IF NOT EXISTS Games (
+    game_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    home_team_id INTEGER,
+    away_team_id INTEGER,
+    game_date TEXT,
+    status TEXT,
+    FOREIGN KEY (home_team_id) REFERENCES Teams (team_id),
+    FOREIGN KEY (away_team_id) REFERENCES Teams (team_id)
+);
+
+CREATE TABLE IF NOT EXISTS Events (
+    event_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    game_id INTEGER,
+    event_type TEXT,
+    team_id INTEGER,
+    player_id INTEGER,
+    points INTEGER,
+    timestamp TEXT,
+    FOREIGN KEY (game_id) REFERENCES Games (game_id),
+    FOREIGN KEY (team_id) REFERENCES Teams (team_id),
+    FOREIGN KEY (player_id) REFERENCES Players (player_id)
+);
