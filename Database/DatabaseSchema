@@ -1,37 +1,95 @@
-CREATE TABLE IF NOT EXISTS Teams (
-    team_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    team_name TEXT NOT NULL,
-    coach_name TEXT
+CREATE TABLE Users (
+    user_id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,  -- Increased length for SHA-256 hash
+    salt VARCHAR(255) NOT NULL,      -- Added salt column
+    role VARCHAR(20) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_login TIMESTAMP,
+    CONSTRAINT valid_role CHECK (role IN ('ADMIN', 'COACH', 'SCORER'))
 );
 
-CREATE TABLE IF NOT EXISTS Players (
-    player_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    team_id INTEGER,
-    player_name TEXT NOT NULL,
-    jersey_number INTEGER,
-    position TEXT,
-    FOREIGN KEY (team_id) REFERENCES Teams (team_id)
+-- Teams table
+CREATE TABLE Teams (
+    team_id SERIAL PRIMARY KEY,
+    team_name VARCHAR(100) NOT NULL UNIQUE,
+    coach_name VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS Games (
-    game_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    home_team_id INTEGER,
-    away_team_id INTEGER,
-    game_date TEXT,
-    status TEXT,
-    FOREIGN KEY (home_team_id) REFERENCES Teams (team_id),
-    FOREIGN KEY (away_team_id) REFERENCES Teams (team_id)
+-- Players table
+CREATE TABLE Players (
+    player_id SERIAL PRIMARY KEY,
+    team_id INTEGER NOT NULL REFERENCES Teams(team_id),
+    player_name VARCHAR(100) NOT NULL,
+    jersey_number INTEGER NOT NULL,
+    position VARCHAR(20),
+    active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT valid_jersey_number CHECK (jersey_number BETWEEN 0 AND 99),
+    CONSTRAINT valid_position CHECK (position IN ('GUARD', 'FORWARD', 'CENTER')),
+    UNIQUE(team_id, jersey_number)
 );
 
-CREATE TABLE IF NOT EXISTS Events (
-    event_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    game_id INTEGER,
-    event_type TEXT,
-    team_id INTEGER,
-    player_id INTEGER,
-    points INTEGER,
-    timestamp TEXT,
-    FOREIGN KEY (game_id) REFERENCES Games (game_id),
-    FOREIGN KEY (team_id) REFERENCES Teams (team_id),
-    FOREIGN KEY (player_id) REFERENCES Players (player_id)
+-- Games table
+CREATE TABLE Games (
+    game_id SERIAL PRIMARY KEY,
+    home_team_id INTEGER NOT NULL REFERENCES Teams(team_id),
+    away_team_id INTEGER NOT NULL REFERENCES Teams(team_id),
+    game_date DATE NOT NULL,
+    start_time TIMESTAMP,
+    end_time TIMESTAMP,
+    status VARCHAR(20) DEFAULT 'NOT_STARTED',
+    final_home_score INTEGER DEFAULT 0,
+    final_away_score INTEGER DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT valid_status CHECK (status IN ('NOT_STARTED', 'ONGOING', 'COMPLETED')),
+    CONSTRAINT different_teams CHECK (home_team_id != away_team_id)
 );
+
+-- Court Locations lookup table
+CREATE TABLE Court_Locations (
+    location_id SERIAL PRIMARY KEY,
+    location_name VARCHAR(50) NOT NULL UNIQUE,
+    description TEXT,
+    is_three_point BOOLEAN DEFAULT FALSE
+);
+
+-- model.Game Events table
+CREATE TABLE Game_Events (
+    event_id SERIAL PRIMARY KEY,
+    game_id INTEGER NOT NULL REFERENCES Games(game_id),
+    player_id INTEGER NOT NULL REFERENCES Players(player_id),
+    event_type VARCHAR(30) NOT NULL,
+    location_id INTEGER REFERENCES Court_Locations(location_id),
+    points INTEGER DEFAULT 0,
+    is_successful BOOLEAN,
+    period INTEGER NOT NULL,
+    game_time VARCHAR(8),  -- MM:SS format
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT valid_event_type CHECK (
+        event_type IN (
+            'SHOT_MADE', 'SHOT_MISSED', 'FREE_THROW',
+            'REBOUND', 'ASSIST', 'STEAL', 'BLOCK',
+            'TURNOVER', 'FOUL'
+        )
+    ),
+    CONSTRAINT valid_period CHECK (period BETWEEN 1 AND 4)
+);
+
+-- Initial data for Court_Locations
+INSERT INTO Court_Locations (location_name, description, is_three_point) VALUES
+    ('TOP_OF_KEY', 'Central area near the three-point line', true),
+    ('LEFT_WING', 'Left side of the key', false),
+    ('RIGHT_WING', 'Right side of the key', false),
+    ('LEFT_CORNER', 'Left corner three-point area', true),
+    ('RIGHT_CORNER', 'Right corner three-point area', true),
+    ('LEFT_BASELINE', 'Area under basket on left side', false),
+    ('RIGHT_BASELINE', 'Area under basket on right side', false),
+    ('FREE_THROW_LINE', 'Free throw shooting area', false);
+
+-- Indexes for better query performance
+CREATE INDEX idx_players_team ON Players(team_id);
+CREATE INDEX idx_events_game ON Game_Events(game_id);
+CREATE INDEX idx_events_player ON Game_Events(player_id);
+CREATE INDEX idx_events_type ON Game_Events(event_type);
