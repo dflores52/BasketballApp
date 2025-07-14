@@ -1,7 +1,6 @@
 package ui;
 
-import Database.TeamDAO;
-import javafx.application.Platform;
+import database.TeamDAO;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;

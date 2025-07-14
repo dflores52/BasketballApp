@@ -1,4 +1,4 @@
-package Database;
+package database;
 import model.Team;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

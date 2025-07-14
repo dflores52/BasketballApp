@@ -1,7 +1,7 @@
 package ui;
 
-import Database.UserDAO;
-import Database.Database;
+import database.UserDAO;
+import database.Database;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -11,8 +11,6 @@ import javafx.stage.Stage;
 import java.sql.SQLException;
 
 public class LoginPage extends Application {
-    private PageManager pageManager = PageManager.getInstance();
-
     @Override
     public void start(Stage primaryStage) {
         try {
@@ -37,13 +35,12 @@ public class LoginPage extends Application {
         PasswordField passField = new PasswordField();
 
         Button loginButton = new Button("Login");
-        Button registerButton = new Button("Register"); // New register button
+        Button registerButton = new Button("Register");
         Label messageLabel = new Label();
 
         VBox layout = new VBox(10, userLabel, userField, passLabel, passField, loginButton, registerButton, messageLabel);
         layout.setStyle("-fx-padding: 20;");
 
-        // Existing login button handler
         loginButton.setOnAction(e -> {
             String username = userField.getText();
             String password = passField.getText();
@@ -58,22 +55,46 @@ public class LoginPage extends Application {
             }
             if (success) {
                 messageLabel.setText("Login successful!");
-                // Create and show the ui.ScoreKeeper window
-                ScoreKeeper scoreKeeper = new ScoreKeeper();
-                try {
-                    Stage scoreKeeperStage = new Stage();
-                    scoreKeeper.start(scoreKeeperStage);
-                    // Close the login window
-                    primaryStage.close();
-                } catch (Exception ex) {
-                    messageLabel.setText("Error launching application: " + ex.getMessage());
-                }
+                
+                // Create main menu window
+                Stage menuStage = new Stage();
+                VBox menuLayout = new VBox(10);
+                menuLayout.setStyle("-fx-padding: 20;");
+                
+                Button scoreKeeperButton = new Button("Score Keeper");
+                Button teamManagementButton = new Button("Team Management");
+                
+                menuLayout.getChildren().addAll(scoreKeeperButton, teamManagementButton);
+                
+                scoreKeeperButton.setOnAction(event -> {
+                    ScoreKeeper scoreKeeper = new ScoreKeeper();
+                    try {
+                        Stage scoreKeeperStage = new Stage();
+                        scoreKeeper.start(scoreKeeperStage);
+                    } catch (Exception ex) {
+                        messageLabel.setText("Error launching Score Keeper: " + ex.getMessage());
+                    }
+                });
+                
+                teamManagementButton.setOnAction(event -> {
+                    TeamManagementUI teamManagement = new TeamManagementUI();
+                    Stage teamManagementStage = new Stage();
+                    teamManagement.show(teamManagementStage);
+                });
+                
+                Scene menuScene = new Scene(menuLayout, 200, 150);
+                menuStage.setTitle("Basketball App Menu");
+                menuStage.setScene(menuScene);
+                menuStage.show();
+                
+                // Close the login window
+                primaryStage.close();
             } else {
                 messageLabel.setText("Invalid credentials.");
             }
         });
 
-        // New register button handler
+        // Register button handler
         registerButton.setOnAction(e -> {
             String username = userField.getText();
             String password = passField.getText();
