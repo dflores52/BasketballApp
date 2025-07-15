@@ -18,9 +18,9 @@ public class GameManager {
     }
     
     /**
-     * Sets up a complete game with teams
+     * Sets up a complete game with teams and game type
      */
-    public Game setupNewGame(String homeTeamName, String awayTeamName) 
+    public Game setupNewGame(String homeTeamName, String awayTeamName, Game.GameType gameType) 
             throws SQLException, TeamException {
         
         // Validate teams exist
@@ -35,40 +35,73 @@ public class GameManager {
             throw new TeamException("Away team not found: " + awayTeamName);
         }
         
-        // Create and start game
-        Game game = gameService.createGame(homeTeamName, awayTeamName);
+        // Create and start game with specified type
+        Game game = gameService.createGame(homeTeamName, awayTeamName, gameType);
         gameService.startGame(game);
         
         return game;
     }
     
     /**
-     * Handles scoring for HOME team
+     * Sets up a complete game with default game type (4 quarters)
      */
-    public void recordHomeScore(Game game, String playerName, int points) {
-        Player player = new Player(playerName, 0);
-        gameService.recordPlayerScore(game, player, points, true); // true = home team
+    public Game setupNewGame(String homeTeamName, String awayTeamName) 
+            throws SQLException, TeamException {
+        return setupNewGame(homeTeamName, awayTeamName, Game.GameType.FOUR_QUARTERS);
     }
     
     /**
-     * Handles scoring for AWAY team
+     * Handles scoring for HOME team with specific player
      */
-    public void recordAwayScore(Game game, String playerName, int points) {
-        Player player = new Player(playerName, 0);
-        gameService.recordPlayerScore(game, player, points, false); // false = away team
+    public void recordHomeScore(Game game, Player player, int points) {
+        gameService.recordPlayerScore(game, player, points, true);
     }
     
     /**
-     * Legacy method - keeping for compatibility but deprecated
-     * @deprecated Use recordHomeScore or recordAwayScore instead
+     * Handles scoring for AWAY team with specific player
      */
-    @Deprecated
-    public void recordScore(Game game, String playerName, int points) {
-        recordHomeScore(game, playerName, points);
+    public void recordAwayScore(Game game, Player player, int points) {
+        gameService.recordPlayerScore(game, player, points, false);
     }
     
     /**
-     * Advances the game to the next period
+     * Records a foul for HOME team with bonus situation handling
+     */
+    public void recordHomeFoul(Game game, Player player) {
+        gameService.recordPlayerFoul(game, player, true);
+    }
+    
+    /**
+     * Records a foul for AWAY team with bonus situation handling
+     */
+    public void recordAwayFoul(Game game, Player player) {
+        gameService.recordPlayerFoul(game, player, false);
+    }
+    
+    /**
+     * Uses a timeout for HOME team
+     */
+    public boolean useHomeTimeout(Game game) {
+        if (game.getHomeTeamStats().useTimeout()) {
+            game.logEvent(game.getHomeTeam() + " used a timeout (Remaining: " + game.getHomeTeamStats().getTimeouts() + ")");
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Uses a timeout for AWAY team
+     */
+    public boolean useAwayTimeout(Game game) {
+        if (game.getAwayTeamStats().useTimeout()) {
+            game.logEvent(game.getAwayTeam() + " used a timeout (Remaining: " + game.getAwayTeamStats().getTimeouts() + ")");
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Advances the game to the next period with proper foul reset
      */
     public void advanceGamePeriod(Game game) {
         gameService.advancePeriod(game);
@@ -79,6 +112,21 @@ public class GameManager {
      */
     public void endGame(Game game) {
         gameService.endGame(game);
+    }
+    
+    /**
+     * Legacy methods for backward compatibility
+     */
+    @Deprecated
+    public void recordHomeScore(Game game, String playerName, int points) {
+        Player player = new Player(playerName, 0);
+        recordHomeScore(game, player, points);
+    }
+    
+    @Deprecated
+    public void recordAwayScore(Game game, String playerName, int points) {
+        Player player = new Player(playerName, 0);
+        recordAwayScore(game, player, points);
     }
     
     public GameService getGameService() {
